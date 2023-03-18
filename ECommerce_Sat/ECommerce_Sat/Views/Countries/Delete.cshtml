@@ -8,33 +8,11 @@
 
 <h3>¿Estás seguro que deseas eliminar este país?</h3>
 <div>
-    <h4>País</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ModifiedDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ModifiedDate)
-        </dd>
-    </dl>
-    
+    <partial name="../Shared/PartialsViews/_CountryDetailDelete" />
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
         <br />
-        <input type="submit" value="Eliminar" class="btn btn-danger" />
+        <input type="submit" value="Eliminar" class="btn btn-outline-danger" />
         <a asp-action="Index" class="btn btn-outline-success">Regresar</a>
     </form>
 </div>
