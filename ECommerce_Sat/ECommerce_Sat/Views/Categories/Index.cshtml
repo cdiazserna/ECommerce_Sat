@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ECommerce_Sat.DAL.Entities.Country>
+﻿@model IEnumerable<ECommerce_Sat.DAL.Entities.Category>
 
 @{
     ViewData["Title"] = "Index";
@@ -6,10 +6,10 @@
 
 <link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css" />
 
-<h1>Países</h1>
+<h1>Categoría</h1>
 
 <p>
-    <a asp-action="Create" class="btn btn-outline-primary">Crear nuevo país</a>
+    <a asp-action="Create" class="btn btn-outline-primary">Crear nueva categoría</a>
 </p>
 
 
@@ -19,11 +19,14 @@
             <div class="panel-heading">
             </div>
             <div class="panel-body">
-                <table class="table table-hover table-responsive table-striped" id="CountryTable">
+                <table class="table table-hover table-responsive table-striped" id="CategoryTable">
                     <thead>
                         <tr>
                             <th>
                                 @Html.DisplayNameFor(model => model.Name)
+                            </th>
+                            <th>
+                                @Html.DisplayNameFor(model => model.Description)
                             </th>
                             <th>
                                 @Html.DisplayNameFor(model => model.CreatedDate)
@@ -40,6 +43,9 @@
                             <tr>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.Name)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Description)
                                 </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.CreatedDate)
@@ -69,7 +75,7 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
-            $('#CountryTable').DataTable({
+            $('#CategoryTable').DataTable({
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
                 },
