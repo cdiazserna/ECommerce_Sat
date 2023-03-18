@@ -1,0 +1,17 @@
+﻿@model ECommerce_Sat.DAL.Entities.Category
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Detalles</h1>
+
+<div>
+    <h4>Categoría</h4>
+    <partial name="../Shared/PartialsViews/_CategoryDetailDelete" />
+</div>
+<div>
+    <br />
+    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-outline-warning">Editar</a>
+    <a asp-action="Index" class="btn btn-outline-success">Regresar</a>
+</div>
