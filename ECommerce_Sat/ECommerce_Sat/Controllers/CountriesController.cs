@@ -14,13 +14,21 @@ namespace ECommerce_Sat.Controllers
             _context = context;
         }
 
+        //GET --> SELECT * FROM.....
+        //POST --> CREATE/ INSERT....
+        //PUT --> UPDATE
+        //DELETE --> DELETE
+        //PATCH --> UPDATE
+
         // GET: Countries
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             return View(await _context.Countries.ToListAsync());
         }
 
         // GET: Countries/Details/5
+        [HttpGet]
         public async Task<IActionResult> Details(Guid? id)
         {
             if (id == null || _context.Countries == null)
@@ -28,8 +36,7 @@ namespace ECommerce_Sat.Controllers
                 return NotFound();
             }
 
-            var country = await _context.Countries
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var country = await _context.Countries.FirstOrDefaultAsync(m => m.Id == id); //Select * From Countries Where Id = '3rf2f-t23gf2-gh234g-g243g'
             if (country == null)
             {
                 return NotFound();
@@ -39,6 +46,7 @@ namespace ECommerce_Sat.Controllers
         }
 
         // GET: Countries/Create
+        [HttpGet]
         public IActionResult Create()
         {
             return View();
@@ -49,13 +57,13 @@ namespace ECommerce_Sat.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,Id,CreatedDate,ModifiedDate")] Country country)
+        public async Task<IActionResult> Create(Country country)
         {
             if (ModelState.IsValid)
             {
                 country.Id = Guid.NewGuid();
                 _context.Add(country);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(); //Insert Into Countries(Id, Name, CreatedDate, ModifiedDate) Values ('1156vc-agv561-agba146-rebn65','Colombia', '03/18/2023', null)
                 return RedirectToAction(nameof(Index));
             }
             return View(country);
@@ -82,7 +90,7 @@ namespace ECommerce_Sat.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Name,Id,CreatedDate,ModifiedDate")] Country country)
+        public async Task<IActionResult> Edit(Guid id, Country country)
         {
             if (id != country.Id)
             {
@@ -94,7 +102,7 @@ namespace ECommerce_Sat.Controllers
                 try
                 {
                     _context.Update(country);
-                    await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync(); //Update Countries Set Name = 'Argentina55', ModifiedDate = '18/03/20230' Where Id = '7a216d04-3048-4757-9b02-f72ded5180bf'
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -120,8 +128,8 @@ namespace ECommerce_Sat.Controllers
                 return NotFound();
             }
 
-            var country = await _context.Countries
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var country = await _context.Countries.FirstOrDefaultAsync(m => m.Id == id); //Select * From Countries Where Id = '7a216d04-3048-4757-9b02-f72ded5180bf'
+
             if (country == null)
             {
                 return NotFound();
@@ -139,13 +147,13 @@ namespace ECommerce_Sat.Controllers
             {
                 return Problem("Entity set 'DataBaseContext.Countries'  is null.");
             }
-            var country = await _context.Countries.FindAsync(id);
+            var country = await _context.Countries.FindAsync(id); //Select * From Countries Where Id = '7a216d04-3048-4757-9b02-f72ded5180bf'
             if (country != null)
             {
-                _context.Countries.Remove(country);
+                _context.Countries.Remove(country); 
             }
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(); //Delete From Counties where Id = '7a216d04-3048-4757-9b02-f72ded5180bf'
             return RedirectToAction(nameof(Index));
         }
 
