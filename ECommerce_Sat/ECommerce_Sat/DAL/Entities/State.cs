@@ -10,7 +10,5 @@ namespace ECommerce_Sat.DAL.Entities
         public string Name { get; set; }
 
         public Country Country { get; set; }
-
-
     }
 }

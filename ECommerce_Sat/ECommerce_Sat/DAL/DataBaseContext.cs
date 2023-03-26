@@ -1,4 +1,5 @@
 ﻿using ECommerce_Sat.DAL.Entities;
+using ECommerce_Sat.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce_Sat.DAL
