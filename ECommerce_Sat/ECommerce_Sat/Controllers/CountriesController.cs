@@ -38,19 +38,13 @@ namespace ECommerce_Sat.Controllers
         [HttpGet]
         public async Task<IActionResult> Details(Guid? id)
         {
-            if (id == null || _context.Countries == null)
-            {
-                return NotFound();
-            }
+            if (id == null || _context.Countries == null) return NotFound();
 
             var country = await _context.Countries
                 .Include(c => c.States) //El Include me hace las veces del INNER JOIN
                 .FirstOrDefaultAsync(m => m.Id == id); //Select * From Countries Where Id = '3rf2f-t23gf2-gh234g-g243g'
             
-            if (country == null)
-            {
-                return NotFound();
-            }
+            if (country == null) return NotFound();
 
             return View(country);
         }
@@ -80,13 +74,9 @@ namespace ECommerce_Sat.Controllers
                 catch (DbUpdateException dbUpdateException)
                 {
                     if (dbUpdateException.InnerException.Message.Contains("duplicate"))
-                    {
                         ModelState.AddModelError(string.Empty, "Ya existe un país con el mismo nombre.");
-                    }
                     else
-                    {
                         ModelState.AddModelError(string.Empty, dbUpdateException.InnerException.Message);
-                    }
                 }
                 catch (Exception exception)
                 {
@@ -99,16 +89,11 @@ namespace ECommerce_Sat.Controllers
         // GET: Countries/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
         {
-            if (id == null || _context.Countries == null)
-            {
-                return NotFound();
-            }
+            if (id == null || _context.Countries == null) return NotFound();
 
             var country = await _context.Countries.FindAsync(id);
-            if (country == null)
-            {
-                return NotFound();
-            }
+            if (country == null) return NotFound();
+
             return View(country);
         }
 
@@ -117,10 +102,7 @@ namespace ECommerce_Sat.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Guid id, Country country)
         {
-            if (id != country.Id)
-            {
-                return NotFound();
-            }
+            if (id != country.Id) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -134,13 +116,9 @@ namespace ECommerce_Sat.Controllers
                 catch (DbUpdateException dbUpdateException)
                 {
                     if (dbUpdateException.InnerException.Message.Contains("duplicate"))
-                    {
                         ModelState.AddModelError(string.Empty, "Ya existe un país con el mismo nombre.");
-                    }
                     else
-                    {
                         ModelState.AddModelError(string.Empty, dbUpdateException.InnerException.Message);
-                    }
                 }
                 catch (Exception exception)
                 {
@@ -153,17 +131,11 @@ namespace ECommerce_Sat.Controllers
         // GET: Countries/Delete/5
         public async Task<IActionResult> Delete(Guid? id)
         {
-            if (id == null || _context.Countries == null)
-            {
-                return NotFound();
-            }
+            if (id == null || _context.Countries == null) return NotFound();
 
             var country = await _context.Countries.FirstOrDefaultAsync(m => m.Id == id); //Select * From Countries Where Id = '7a216d04-3048-4757-9b02-f72ded5180bf'
 
-            if (country == null)
-            {
-                return NotFound();
-            }
+            if (country == null) return NotFound();
 
             return View(country);
         }
@@ -174,14 +146,10 @@ namespace ECommerce_Sat.Controllers
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             if (_context.Countries == null)
-            {
-                return Problem("Entity set 'DataBaseContext.Countries'  is null.");
-            }
+                return Problem("Entity set 'DataBaseContext.Countries' is null.");
+
             var country = await _context.Countries.FindAsync(id); //Select * From Countries Where Id = '7a216d04-3048-4757-9b02-f72ded5180bf'
-            if (country != null)
-            {
-                _context.Countries.Remove(country); 
-            }
+            if (country != null) _context.Countries.Remove(country); 
 
             await _context.SaveChangesAsync(); //Delete From Counties where Id = '7a216d04-3048-4757-9b02-f72ded5180bf'
             return RedirectToAction(nameof(Index));
@@ -194,17 +162,11 @@ namespace ECommerce_Sat.Controllers
         [HttpGet]
         public async Task<IActionResult> AddState(Guid? countryId)
         {
-            if (countryId == null)
-            {
-                return NotFound();
-            }
+            if (countryId == null) return NotFound();
 
             Country country = await _context.Countries.FirstOrDefaultAsync(c => c.Id == countryId);
 
-            if (country == null)
-            {
-                return NotFound();
-            }
+            if (country == null) return NotFound();
 
             StateViewModel stateViewModel = new()
             {
@@ -238,13 +200,9 @@ namespace ECommerce_Sat.Controllers
                 catch (DbUpdateException dbUpdateException)
                 {
                     if (dbUpdateException.InnerException.Message.Contains("duplicate"))
-                    {
                         ModelState.AddModelError(string.Empty, "Ya existe un Dpto/Estado con el mismo nombre en este país.");
-                    }
                     else
-                    {
                         ModelState.AddModelError(string.Empty, dbUpdateException.InnerException.Message);
-                    }
                 }
                 catch (Exception exception)
                 {
@@ -257,19 +215,13 @@ namespace ECommerce_Sat.Controllers
         [HttpGet]
         public async Task<IActionResult> EditState(Guid? stateId)
         {
-            if (stateId == null || _context.States == null)
-            {
-                return NotFound();
-            }
+            if (stateId == null || _context.States == null) return NotFound();
 
             State state = await _context.States
                 .Include(s => s.Country)
                 .FirstOrDefaultAsync(s => s.Id == stateId);
 
-            if (state == null)
-            {
-                return NotFound();
-            }
+            if (state == null) return NotFound();
 
             StateViewModel stateViewModel = new()
             {
@@ -286,10 +238,7 @@ namespace ECommerce_Sat.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditState(Guid countryId, StateViewModel stateViewModel)
         {
-            if (countryId != stateViewModel.CountryId)
-            {
-                return NotFound();
-            }
+            if (countryId != stateViewModel.CountryId) return NotFound();
 
             if (ModelState.IsValid)
             {
@@ -300,7 +249,7 @@ namespace ECommerce_Sat.Controllers
                         Id = stateViewModel.Id,
                         Name = stateViewModel.Name,
                         CreatedDate = stateViewModel.CreatedDate,
-                        ModifiedDate = DateTime.UtcNow,
+                        ModifiedDate = DateTime.Now,
                     };
 
                     _context.Update(state);
@@ -310,13 +259,9 @@ namespace ECommerce_Sat.Controllers
                 catch (DbUpdateException dbUpdateException)
                 {
                     if (dbUpdateException.InnerException.Message.Contains("duplicate"))
-                    {
                         ModelState.AddModelError(string.Empty, "Ya existe un estado con el mismo nombre.");
-                    }
                     else
-                    {
                         ModelState.AddModelError(string.Empty, dbUpdateException.InnerException.Message);
-                    }
                 }
                 catch (Exception exception)
                 {
@@ -430,75 +375,62 @@ namespace ECommerce_Sat.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> EditCity(Guid? stateId)
+        public async Task<IActionResult> EditCity(Guid? cityId)
         {
-            if (stateId == null || _context.States == null)
-            {
-                return NotFound();
-            }
+            if (cityId == null || _context.Cities == null) return NotFound();
 
-            State state = await _context.States
-                .Include(s => s.Country)
-                .FirstOrDefaultAsync(s => s.Id == stateId);
+            City city = await _context.Cities
+                .Include(s => s.State)
+                .FirstOrDefaultAsync(s => s.Id == cityId);
 
-            if (state == null)
-            {
-                return NotFound();
-            }
+            if (city == null) return NotFound();
 
-            StateViewModel stateViewModel = new()
+            CityViewModel cityViewModel = new()
             {
-                CountryId = state.Country.Id,
-                Id = state.Id,
-                Name = state.Name,
-                CreatedDate = state.CreatedDate,
+                StateId = city.State.Id,
+                Id = city.Id,
+                Name = city.Name,
+                CreatedDate = city.CreatedDate,
             };
 
-            return View(stateViewModel);
+            return View(cityViewModel);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditCity(Guid countryId, StateViewModel stateViewModel)
+        public async Task<IActionResult> EditCity(Guid stateId, CityViewModel cityViewModel)
         {
-            if (countryId != stateViewModel.CountryId)
-            {
-                return NotFound();
-            }
+            if (stateId != cityViewModel.StateId) return NotFound();
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    State state = new()
+                    City city = new()
                     {
-                        Id = stateViewModel.Id,
-                        Name = stateViewModel.Name,
-                        CreatedDate = stateViewModel.CreatedDate,
-                        ModifiedDate = DateTime.UtcNow,
+                        Id = cityViewModel.Id,
+                        Name = cityViewModel.Name,
+                        CreatedDate = cityViewModel.CreatedDate,
+                        ModifiedDate = DateTime.Now,
                     };
 
-                    _context.Update(state);
+                    _context.Update(city);
                     await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Details), new { Id = stateViewModel.CountryId });
+                    return RedirectToAction(nameof(DetailsState), new { stateId = cityViewModel.StateId });
                 }
                 catch (DbUpdateException dbUpdateException)
                 {
                     if (dbUpdateException.InnerException.Message.Contains("duplicate"))
-                    {
-                        ModelState.AddModelError(string.Empty, "Ya existe un estado con el mismo nombre.");
-                    }
+                        ModelState.AddModelError(string.Empty, "Ya existe una ciudad con el mismo nombre.");
                     else
-                    {
                         ModelState.AddModelError(string.Empty, dbUpdateException.InnerException.Message);
-                    }
                 }
                 catch (Exception exception)
                 {
                     ModelState.AddModelError(string.Empty, exception.Message);
                 }
             }
-            return View(stateViewModel);
+            return View(cityViewModel);
         }
 
         [HttpGet]
