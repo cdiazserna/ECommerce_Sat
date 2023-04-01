@@ -1,0 +1,18 @@
+﻿@model ECommerce_Sat.DAL.Entities.State
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Eliminar</h1>
+
+<h3>¿Estás seguro que deseas eliminar este dpto/estado?</h3>
+<div>
+    <partial name="../Shared/PartialsViews/_StateDetailDelete" />
+    <form asp-action="DeleteState">
+        <input type="hidden" asp-for="Id" />
+        <br />
+        <input type="submit" asp-route-stateId="@Model?.Id" value="Eliminar" class="btn btn-outline-danger" />
+        <a asp-action="Details" asp-route-id="@Model?.Country.Id" class="btn btn-outline-success">Regresar</a>
+    </form>
+</div>

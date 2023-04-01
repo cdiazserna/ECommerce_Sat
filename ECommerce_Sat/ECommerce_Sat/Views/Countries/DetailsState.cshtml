@@ -1,4 +1,4 @@
-﻿@model ECommerce_Sat.DAL.Entities.Country
+﻿@model ECommerce_Sat.DAL.Entities.State
 
 @{
     ViewData["Title"] = "Details";
@@ -9,50 +9,44 @@
 <h1>Detalles</h1>
 
 <div>
-    <h4>País</h4>
-    <partial name="../Shared/PartialsViews/_CountryDetailDelete" />
+    <h4>Dpto/Estado</h4>
+    <partial name="../Shared/PartialsViews/_StateDetailDelete" />
 </div>
 <div>
     <br />
-    <a asp-action="AddState" asp-route-countryId="@Model?.Id" class="btn btn-outline-primary">Agregar Dpto/Esdtado</a>
-    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-outline-warning">Editar</a>
-    <a asp-action="Index" class="btn btn-outline-success">Regresar</a>
+    <a asp-action="AddCity" asp-route-stateId="@Model?.Id" class="btn btn-outline-primary">Agregar Ciudad</a>
+    <a asp-action="EditState" asp-route-stateid="@Model?.Id" class="btn btn-outline-warning">Editar Dto/Estado</a>
+    <a asp-action="Details" asp-route-id="@Model?.Country.Id" class="btn btn-outline-success">Regresar</a>
 </div>
 <hr />
 <div class="row">
     <div class="col-md-12">
         <div class="panel panel-default">
             <div class="panel-heading">
-                <h3 class="panel-title">Estados</h3>
+                <h3 class="panel-title">Ciudades</h3>
             </div>
             <div class="panel-body">
-                <table class="table table-hover table-responsive table-striped" id="StateTable">
+                <table class="table table-hover table-responsive table-striped" id="CityTable">
                     <thead>
                         <tr>
                             <th>
-                                @Html.DisplayNameFor(model => model.States.FirstOrDefault().Name)
+                                @Html.DisplayNameFor(model => model.Cities.FirstOrDefault().Name)
                             </th>
                             <th>
-                                @Html.DisplayNameFor(model => model.States.FirstOrDefault().CitiesNumber)
+                                @Html.DisplayNameFor(model => model.Cities.FirstOrDefault().CreatedDate)
                             </th>
                             <th>
-                                @Html.DisplayNameFor(model => model.States.FirstOrDefault().CreatedDate)
-                            </th>
-                            <th>
-                                @Html.DisplayNameFor(model => model.States.FirstOrDefault().ModifiedDate)
+                                @Html.DisplayNameFor(model => model.Cities.FirstOrDefault().ModifiedDate)
                             </th>
                             <th></th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var item in Model.States)
+                        @foreach (var item in Model.Cities)
                         {
                             <tr>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.Name)
-                                </td>
-                                <td>
-                                    @Html.DisplayFor(modelItem => item.CitiesNumber)
                                 </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.CreatedDate)
@@ -61,9 +55,9 @@
                                     @Html.DisplayFor(modelItem => item.ModifiedDate)
                                 </td>
                                 <td>
-                                    <a asp-action="EditState" asp-route-stateId="@item.Id" class="btn btn-outline-warning">Editar</a>
-                                    <a asp-action="DetailsState" asp-route-stateId="@item.Id" class="btn btn-outline-info">Detalles</a>
-                                    <a asp-action="DeleteState" asp-route-stateId="@item.Id" class="btn btn-outline-danger">Eliminar</a>
+                                    <a asp-action="EditCity" asp-route-cityId="@item.Id" class="btn btn-outline-warning">Editar</a>
+                                    <a asp-action="DetailsCity" asp-route-cityId="@item.Id" class="btn btn-outline-info">Detalles</a>
+                                    <a asp-action="DeleteCity" asp-route-cityId="@item.Id" class="btn btn-outline-danger">Eliminar</a>
                                 </td>
                             </tr>
                         }
@@ -82,7 +76,7 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
-            $('#StateTable').DataTable({
+            $('#CityTable').DataTable({
                 "language": {
                     "url": "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Spanish.json"
                 },

@@ -317,5 +317,54 @@ namespace ECommerce_Sat.Controllers
             }
             return View(stateViewModel);
         }
+        
+            // GET: Countries/Details/5
+        [HttpGet]
+        public async Task<IActionResult> DetailsState(Guid? stateId)
+        {
+            if (stateId == null || _context.States == null) return NotFound();
+
+            var state = await _context.States
+                .Include(c => c.Country) //El Include me hace las veces del INNER JOIN
+                .Include(c => c.Cities)
+                .FirstOrDefaultAsync(m => m.Id == stateId); //Select * From States Where Id = '3rf2f-t23gf2-gh234g-g243g'
+            
+            if (state == null) return NotFound();
+
+            return View(state);
+        }
+
+        // GET: Countries/Delete/5
+        public async Task<IActionResult> DeleteState(Guid? stateId)
+        {
+            if (stateId == null || _context.Countries == null) return NotFound();
+
+            var state = await _context.States
+                .Include(c => c.Country)
+                .Include(c => c.Cities)
+                .FirstOrDefaultAsync(m => m.Id == stateId);
+
+            if (state == null) return NotFound();
+
+            return View(state);
+        }
+
+        // POST: Countries/Delete/5
+        [HttpPost, ActionName("DeleteState")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteStateConfirmed(Guid stateId)
+        {
+            if (_context.States == null) return Problem("Entity set 'DataBaseContext.States' is null.");
+
+            var state = await _context.States
+                .Include(c => c.Country)
+                .Include(c => c.Cities)
+                .FirstOrDefaultAsync(m => m.Id == stateId);
+
+            if (state != null) _context.States.Remove(state);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Details), new { id = state.Country.Id });
+        }
     }
 }

@@ -1,4 +1,4 @@
-﻿@model ECommerce_Sat.Models.StateViewModel
+﻿@model ECommerce_Sat.DAL.Entities.State
 
 <hr />
 <dl class="row">
@@ -7,6 +7,12 @@
     </dt>
     <dd class="col-sm-10">
         @Html.DisplayFor(model => model.Name)
+    </dd>
+    <dt class="col-sm-2">
+        @Html.DisplayNameFor(model => model.CitiesNumber)
+    </dt>
+    <dd class="col-sm-10">
+        @Html.DisplayFor(model => model.CitiesNumber)
     </dd>
     <dt class="col-sm-2">
         @Html.DisplayNameFor(model => model.CreatedDate)
