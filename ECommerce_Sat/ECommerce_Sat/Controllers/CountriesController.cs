@@ -42,6 +42,7 @@ namespace ECommerce_Sat.Controllers
 
             var country = await _context.Countries
                 .Include(c => c.States) //El Include me hace las veces del INNER JOIN
+                .ThenInclude(s => s.Cities)
                 .FirstOrDefaultAsync(m => m.Id == id); //Select * From Countries Where Id = '3rf2f-t23gf2-gh234g-g243g'
             
             if (country == null) return NotFound();
@@ -434,18 +435,17 @@ namespace ECommerce_Sat.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> DetailsCity(Guid? stateId)
+        public async Task<IActionResult> DetailsCity(Guid? cityId)
         {
-            if (stateId == null || _context.States == null) return NotFound();
+            if (cityId == null || _context.Cities == null) return NotFound();
 
-            var state = await _context.States
-                .Include(c => c.Country) //El Include me hace las veces del INNER JOIN
-                .Include(c => c.Cities)
-                .FirstOrDefaultAsync(m => m.Id == stateId); //Select * From States Where Id = '3rf2f-t23gf2-gh234g-g243g'
+            var city = await _context.Cities
+                .Include(c => c.State) //El Include me hace las veces del INNER JOIN
+                .FirstOrDefaultAsync(m => m.Id == cityId); //Select * From States Where Id = '3rf2f-t23gf2-gh234g-g243g'
 
-            if (state == null) return NotFound();
+            if (city == null) return NotFound();
 
-            return View(state);
+            return View(city);
         }
 
         public async Task<IActionResult> DeleteCity(Guid? stateId)

@@ -9,6 +9,7 @@ namespace ECommerce_Sat.DAL.Entities
         [Required(ErrorMessage = "El campo {0} es obligatorio")] //Not Null
         public string Name { get; set; }
 
+        [Display(Name = "Estado")] //Nombre que quiero mostrar en la web
         public State State { get; set; }
     }
 }

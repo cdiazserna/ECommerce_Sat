@@ -1,0 +1,27 @@
+﻿@model ECommerce_Sat.DAL.Entities.City
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.3/css/jquery.dataTables.min.css" />
+
+<h1>Detalles</h1>
+
+<div>
+    <h4>Ciudad</h4>
+    <partial name="../Shared/PartialsViews/_CityDetailDelete" />
+</div>
+<div>
+    <br />
+    <a asp-action="EditCity" asp-route-cityId="@Model?.Id" class="btn btn-outline-primary">Editar Ciudad</a>
+    <a asp-action="DeleteCity" asp-route-cityId="@Model?.Id" class="btn btn-outline-warning">Eliminar Ciudad</a>
+    <a asp-action="DetailsState" asp-route-stateId="@Model?.State.Id" class="btn btn-outline-success">Regresar</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script src="//cdn.datatables.net/1.13.3/js/jquery.dataTables.min.js"></script>
+}
