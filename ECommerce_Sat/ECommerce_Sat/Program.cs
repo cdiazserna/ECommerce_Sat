@@ -1,4 +1,8 @@
 using ECommerce_Sat.DAL;
+using ECommerce_Sat.DAL.Entities;
+using ECommerce_Sat.Helpers;
+using ECommerce_Sat.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -14,6 +18,20 @@ builder.Services.AddRazorPages().AddRazorRuntimeCompilation();
 
 //Builder para llamar la clase SeederDb.cs
 builder.Services.AddTransient<SeederDb>();
+
+//Builder para llamar la interfaz IUserHelper.cs
+builder.Services.AddScoped<IUserHelper, UserHelper>();
+
+builder.Services.AddIdentity<User, IdentityRole>(io =>
+{
+	io.User.RequireUniqueEmail = true;
+	io.Password.RequireDigit = false;
+	io.Password.RequiredUniqueChars = 0;
+	io.Password.RequireLowercase = false;
+	io.Password.RequireNonAlphanumeric = false;
+	io.Password.RequireUppercase = false;
+	io.Password.RequiredLength = 6;
+}).AddEntityFrameworkStores<DataBaseContext>();
 
 var app = builder.Build();
 
@@ -43,6 +61,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
+app.UseAuthentication(); //Autenticar mi usuario
 
 app.MapControllerRoute(
     name: "default",

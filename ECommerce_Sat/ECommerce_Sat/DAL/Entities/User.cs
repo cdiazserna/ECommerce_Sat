@@ -6,6 +6,12 @@ namespace ECommerce_Sat.DAL.Entities
 {
 	public class User : IdentityUser
 	{
+		[Display(Name = "Fecha de creación")]
+		public virtual DateTime? CreatedDate { get; set; }
+
+		[Display(Name = "Fecha de modificación")]
+		public virtual DateTime? ModifiedDate { get; set; }
+
 		[Display(Name = "Documento")]
 		[MaxLength(20, ErrorMessage = "El campo {0} debe tener máximo {1} caractéres.")]
 		[Required(ErrorMessage = "El campo {0} es obligatorio.")]
