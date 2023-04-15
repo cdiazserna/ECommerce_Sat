@@ -1,6 +1,7 @@
 ﻿using ECommerce_Sat.DAL;
 using ECommerce_Sat.DAL.Entities;
 using ECommerce_Sat.Helpers;
+using ECommerce_Sat.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,12 +12,14 @@ namespace ECommerce_Sat.Services
 		private readonly DataBaseContext _context;
 		private readonly UserManager<User> _userManager;
 		private readonly RoleManager<IdentityRole> _roleManager;
+		private readonly SignInManager<User> _signInManager;
 
-        public UserHelper(DataBaseContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager)
+        public UserHelper(DataBaseContext context, UserManager<User> userManager, RoleManager<IdentityRole> roleManager, SignInManager<User> signInManager)
         {
 			_context = context;
 			_userManager = userManager;
 			_roleManager = roleManager;
+			_signInManager = signInManager;
 		}
 
         public async Task AddRoleAsync(string roleName)
@@ -52,6 +55,16 @@ namespace ECommerce_Sat.Services
 		public async Task<bool> IsUserInRoleAsync(User user, string roleName)
 		{
 			return await _userManager.IsInRoleAsync(user, roleName);
+		}
+
+		public async Task<SignInResult> LoginAsync(LoginViewModel loginViewModel)
+		{
+			return await _signInManager.PasswordSignInAsync(loginViewModel.Username, loginViewModel.Password, loginViewModel.RememberMe, false);
+		}
+
+		public async Task LogoutAsync()
+		{
+			await _signInManager.SignOutAsync();
 		}
 	}
 }

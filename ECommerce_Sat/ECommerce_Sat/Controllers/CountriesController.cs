@@ -1,8 +1,10 @@
 ﻿using ECommerce_Sat.DAL;
 using ECommerce_Sat.DAL.Entities;
 using ECommerce_Sat.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace ECommerce_Sat.Controllers
 {
@@ -50,17 +52,20 @@ namespace ECommerce_Sat.Controllers
             return View(country);
         }
 
-        // GET: Countries/Create
-        [HttpGet]
-        public IActionResult Create()
+
+		// GET: Countries/Create
+		[HttpGet]
+		[Authorize(Roles = "Admin")]
+		public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Countries/Create
-        [HttpPost]
+		// POST: Countries/Create
+		[HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Country country)
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> Create(Country country)
         {
             if (ModelState.IsValid)
             {
@@ -87,8 +92,9 @@ namespace ECommerce_Sat.Controllers
             return View(country);
         }
 
-        // GET: Countries/Edit/5
-        public async Task<IActionResult> Edit(Guid? id)
+		// GET: Countries/Edit/5
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null || _context.Countries == null) return NotFound();
 
@@ -101,7 +107,8 @@ namespace ECommerce_Sat.Controllers
         // POST: Countries/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, Country country)
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> Edit(Guid id, Country country)
         {
             if (id != country.Id) return NotFound();
 
@@ -129,8 +136,9 @@ namespace ECommerce_Sat.Controllers
             return View(country);
         }
 
-        // GET: Countries/Delete/5
-        public async Task<IActionResult> Delete(Guid? id)
+		// GET: Countries/Delete/5
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null || _context.Countries == null) return NotFound();
 
@@ -144,7 +152,8 @@ namespace ECommerce_Sat.Controllers
         // POST: Countries/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(Guid id)
+		[Authorize(Roles = "Admin")]
+		public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             if (_context.Countries == null)
                 return Problem("Entity set 'DataBaseContext.Countries' is null.");

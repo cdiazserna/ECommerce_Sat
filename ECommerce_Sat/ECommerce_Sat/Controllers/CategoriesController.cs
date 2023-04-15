@@ -1,10 +1,12 @@
 ﻿using ECommerce_Sat.DAL;
 using ECommerce_Sat.DAL.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce_Sat.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class CategoriesController : Controller
     {
         private readonly DataBaseContext _context;

@@ -33,6 +33,13 @@ builder.Services.AddIdentity<User, IdentityRole>(io =>
 	io.Password.RequiredLength = 6;
 }).AddEntityFrameworkStores<DataBaseContext>();
 
+builder.Services.ConfigureApplicationCookie(options =>
+{
+	options.LoginPath = "/Account/Unauthorized";
+	options.AccessDeniedPath = "/Account/Unauthorized";
+});
+
+
 var app = builder.Build();
 
 SeederData();
@@ -62,6 +69,8 @@ app.UseRouting();
 
 app.UseAuthorization();
 app.UseAuthentication(); //Autenticar mi usuario
+
+app.UseStatusCodePagesWithReExecute("/error/{0}");
 
 app.MapControllerRoute(
     name: "default",
