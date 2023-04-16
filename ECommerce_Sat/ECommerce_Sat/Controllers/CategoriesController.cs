@@ -73,7 +73,7 @@ namespace ECommerce_Sat.Controllers
 
             var category = await _context.Categories.FindAsync(id);
             if (category == null)
-            { 
+            {
                 return NotFound();
             }
             return View(category);

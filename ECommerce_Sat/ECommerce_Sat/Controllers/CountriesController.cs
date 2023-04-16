@@ -4,7 +4,6 @@ using ECommerce_Sat.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Data;
 
 namespace ECommerce_Sat.Controllers
 {
@@ -34,7 +33,7 @@ namespace ECommerce_Sat.Controllers
         {
             return View(await _context.Countries
                 .Include(c => c.States) //El Include me hace las veces del INNER JOIN
-                .ToListAsync()); 
+                .ToListAsync());
         }
 
         // GET: Countries/Details/5
@@ -47,26 +46,26 @@ namespace ECommerce_Sat.Controllers
                 .Include(c => c.States) //El Include me hace las veces del INNER JOIN
                 .ThenInclude(s => s.Cities)
                 .FirstOrDefaultAsync(m => m.Id == id); //Select * From Countries Where Id = '3rf2f-t23gf2-gh234g-g243g'
-            
+
             if (country == null) return NotFound();
 
             return View(country);
         }
 
 
-		// GET: Countries/Create
-		[HttpGet]
-		[Authorize(Roles = "Admin")]
-		public IActionResult Create()
+        // GET: Countries/Create
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        public IActionResult Create()
         {
             return View();
         }
 
-		// POST: Countries/Create
-		[HttpPost]
+        // POST: Countries/Create
+        [HttpPost]
         [ValidateAntiForgeryToken]
-		[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> Create(Country country)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Create(Country country)
         {
             if (ModelState.IsValid)
             {
@@ -93,9 +92,9 @@ namespace ECommerce_Sat.Controllers
             return View(country);
         }
 
-		// GET: Countries/Edit/5
-		[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> Edit(Guid? id)
+        // GET: Countries/Edit/5
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null || _context.Countries == null) return NotFound();
 
@@ -108,8 +107,8 @@ namespace ECommerce_Sat.Controllers
         // POST: Countries/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-		[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> Edit(Guid id, Country country)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(Guid id, Country country)
         {
             if (id != country.Id) return NotFound();
 
@@ -137,9 +136,9 @@ namespace ECommerce_Sat.Controllers
             return View(country);
         }
 
-		// GET: Countries/Delete/5
-		[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> Delete(Guid? id)
+        // GET: Countries/Delete/5
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Delete(Guid? id)
         {
             if (id == null || _context.Countries == null) return NotFound();
 
@@ -153,14 +152,14 @@ namespace ECommerce_Sat.Controllers
         // POST: Countries/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-		[Authorize(Roles = "Admin")]
-		public async Task<IActionResult> DeleteConfirmed(Guid id)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
             if (_context.Countries == null)
                 return Problem("Entity set 'DataBaseContext.Countries' is null.");
 
             var country = await _context.Countries.FindAsync(id); //Select * From Countries Where Id = '7a216d04-3048-4757-9b02-f72ded5180bf'
-            if (country != null) _context.Countries.Remove(country); 
+            if (country != null) _context.Countries.Remove(country);
 
             await _context.SaveChangesAsync(); //Delete From Counties where Id = '7a216d04-3048-4757-9b02-f72ded5180bf'
             return RedirectToAction(nameof(Index));
@@ -281,7 +280,7 @@ namespace ECommerce_Sat.Controllers
             }
             return View(stateViewModel);
         }
-        
+
         [HttpGet]
         public async Task<IActionResult> DetailsState(Guid? stateId)
         {
@@ -291,7 +290,7 @@ namespace ECommerce_Sat.Controllers
                 .Include(c => c.Country) //El Include me hace las veces del INNER JOIN
                 .Include(c => c.Cities)
                 .FirstOrDefaultAsync(m => m.Id == stateId); //Select * From States Where Id = '3rf2f-t23gf2-gh234g-g243g'
-            
+
             if (state == null) return NotFound();
 
             return View(state);
