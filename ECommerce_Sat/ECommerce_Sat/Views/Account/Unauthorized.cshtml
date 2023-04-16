@@ -1,8 +1,20 @@
 ﻿@{
-	ViewData["Title"] = "NotAuthorized";
+    ViewData["Title"] = "NotAuthorized";
 }
+<head>
+    <style>
+        .image {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<div class="image">
+    <img style="width:60%" src="~/images/UnauthorizedPage.png" />
+</div>
 
-<br />
-<br />
-<img src="~/images/UnauthorizedPage.png" />
-<h2>No estás autorizado para ejecutar esta acción!</h2>
+<div class="image">
+    <h2>No estás autorizado para ejecutar esta acción!</h2>
+</div>

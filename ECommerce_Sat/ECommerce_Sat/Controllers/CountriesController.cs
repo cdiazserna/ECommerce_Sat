@@ -8,6 +8,7 @@ using System.Data;
 
 namespace ECommerce_Sat.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class CountriesController : Controller
     {
         #region Constructor
