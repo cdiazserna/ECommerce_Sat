@@ -67,8 +67,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthorization();
 app.UseAuthentication(); //Autenticar mi usuario
+app.UseAuthorization();
 
 app.UseStatusCodePagesWithReExecute("/error/{0}");
 
