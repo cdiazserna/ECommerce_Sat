@@ -39,7 +39,7 @@ namespace ECommerce_Sat.DAL.Entities
 		[Display(Name = "Foto")]
 		public string ImageFullPath => ImageId == Guid.Empty
 			? $"https://localhost:7057/images/noimage.png"
-			: $"https://ecommerce.blob.core.windows.net/users/{ImageId}";
+			: $"https://sales2023.blob.core.windows.net/users/{ImageId}";
 
 		[Display(Name = "Tipo de usuario")]
 		public UserType UserType { get; set; }
