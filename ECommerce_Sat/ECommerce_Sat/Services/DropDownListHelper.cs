@@ -1,9 +1,7 @@
 ﻿using ECommerce_Sat.DAL;
-using ECommerce_Sat.DAL.Entities;
 using ECommerce_Sat.Helpers;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Scaffolding.Metadata;
 
 namespace ECommerce_Sat.Services
 {
@@ -30,7 +28,8 @@ namespace ECommerce_Sat.Services
             listCategories.Insert(0, new SelectListItem
             {
                 Text = "Selecione una categoría...",
-                Value = "0",
+                Value = Guid.Empty.ToString(),
+                Selected = true
             });
 
             return listCategories;
@@ -50,7 +49,8 @@ namespace ECommerce_Sat.Services
             listCountries.Insert(0, new SelectListItem
             {
                 Text = "Selecione un país...",
-                Value = "0",
+                Value = Guid.Empty.ToString(),
+                Selected = true
             });
 
             return listCountries;
@@ -72,7 +72,8 @@ namespace ECommerce_Sat.Services
             listStates.Insert(0, new SelectListItem
             {
                 Text = "Selecione un estado...",
-                Value = "0",
+                Value = Guid.Empty.ToString(),
+                Selected = true
             });
 
             return listStates;
@@ -93,7 +94,8 @@ namespace ECommerce_Sat.Services
             listCities.Insert(0, new SelectListItem
             {
                 Text = "Selecione una ciudad...",
-                Value = "0",
+                Value = Guid.Empty.ToString(),
+                Selected = true
             });
 
             return listCities;
