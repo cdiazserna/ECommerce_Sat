@@ -40,7 +40,32 @@ namespace ECommerce_Sat.Services
 			return await _userManager.CreateAsync(user, password);
 		}
 
-		public async Task AddUserToRoleAsync(User user, string roleName)
+        public async Task<User> AddUserAsync(AddUserViewModel addUserViewModel)
+        {
+            User user = new()
+            {
+                Address = addUserViewModel.Address,
+                Document = addUserViewModel.Document,
+                Email = addUserViewModel.Username,
+                FirstName = addUserViewModel.FirstName,
+                LastName = addUserViewModel.LastName,
+                ImageId = addUserViewModel.ImageId,
+                PhoneNumber = addUserViewModel.PhoneNumber,
+                City = await _context.Cities.FindAsync(addUserViewModel.CityId),
+                UserName = addUserViewModel.Username,
+                UserType = addUserViewModel.UserType,
+            };
+
+            IdentityResult result = await _userManager.CreateAsync(user, addUserViewModel.Password);
+            if (result != IdentityResult.Success) return null;
+
+            User newUser = await GetUserAsync(addUserViewModel.Username);
+            await AddUserToRoleAsync(newUser, user.UserType.ToString());
+            return newUser;
+        }
+
+
+        public async Task AddUserToRoleAsync(User user, string roleName)
 		{
 			await _userManager.AddToRoleAsync(user, roleName);
 		}

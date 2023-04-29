@@ -28,7 +28,7 @@ namespace ECommerce_Sat.Services
             listCategories.Insert(0, new SelectListItem
             {
                 Text = "Selecione una categoría...",
-                Value = Guid.Empty.ToString(),
+                Value = Guid.Empty.ToString(), //Esto significa: "00000000-0000-0000-0000-000000000000"
                 Selected = true
             });
 
