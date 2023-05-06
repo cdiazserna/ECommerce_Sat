@@ -27,7 +27,7 @@ namespace ECommerce_Sat.Services
 
             listCategories.Insert(0, new SelectListItem
             {
-                Text = "Selecione una categoría...",
+                Text = "Seleccione una categoría...",
                 Value = Guid.Empty.ToString(), //Esto significa: "00000000-0000-0000-0000-000000000000"
                 Selected = true
             });
@@ -48,7 +48,7 @@ namespace ECommerce_Sat.Services
 
             listCountries.Insert(0, new SelectListItem
             {
-                Text = "Selecione un país...",
+                Text = "Seleccione un país...",
                 Value = Guid.Empty.ToString(),
                 Selected = true
             });
@@ -71,7 +71,7 @@ namespace ECommerce_Sat.Services
 
             listStates.Insert(0, new SelectListItem
             {
-                Text = "Selecione un estado...",
+                Text = "Seleccione un estado...",
                 Value = Guid.Empty.ToString(),
                 Selected = true
             });
@@ -93,7 +93,7 @@ namespace ECommerce_Sat.Services
 
             listCities.Insert(0, new SelectListItem
             {
-                Text = "Selecione una ciudad...",
+                Text = "Seleccione una ciudad...",
                 Value = Guid.Empty.ToString(),
                 Selected = true
             });

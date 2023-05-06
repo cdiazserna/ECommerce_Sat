@@ -50,7 +50,7 @@ namespace ECommerce_Sat.Models
 
         public IEnumerable<SelectListItem> Countries { get; set; }
 
-        [Display(Name = "Departmento/Estado")]
+        [Display(Name = "Departamento/Estado")]
         [NonEmptyGuid(ErrorMessage = "Debes de seleccionar un estado.")]
         [Required(ErrorMessage = "El campo {0} es obligatorio.")]
         public Guid StateId { get; set; }
