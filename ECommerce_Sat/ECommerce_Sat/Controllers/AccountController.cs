@@ -125,6 +125,68 @@ namespace ECommerce_Sat.Controllers
             addUserViewModel.Cities = await _ddlHelper.GetDDLCitiesAsync(addUserViewModel.StateId);
         }
 
+        public async Task<IActionResult> EditUser()
+        {
+            User user = await _userHelper.GetUserAsync(User.Identity.Name);
+           
+            if (user == null) return NotFound();
+
+            EditUserViewModel editUserViewModel = new()
+            {
+                Address = user.Address,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                PhoneNumber = user.PhoneNumber,
+                ImageId = user.ImageId,
+                Cities = await _ddlHelper.GetDDLCitiesAsync(user.City.State.Id),
+                CityId = user.City.Id,
+                Countries = await _ddlHelper.GetDDLCountriesAsync(),
+                CountryId = user.City.State.Country.Id,
+                States = await _ddlHelper.GetDDLStatesAsync(user.City.State.Country.Id),
+                StateId = user.City.State.Id,
+                Id = Guid.Parse(user.Id),
+                Document = user.Document
+            };
+
+            return View(editUserViewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditUser(EditUserViewModel editUserViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                Guid imageId = editUserViewModel.ImageId;
+
+                if (editUserViewModel.ImageFile != null) imageId = await _azureBlobHelper.UploadAzureBlobAsync(editUserViewModel.ImageFile, "users");
+
+                User user = await _userHelper.GetUserAsync(User.Identity.Name);
+
+                user.FirstName = editUserViewModel.FirstName; 
+                user.LastName = editUserViewModel.LastName;
+                user.Address = editUserViewModel.Address;
+                user.PhoneNumber = editUserViewModel.PhoneNumber;
+                user.ImageId = imageId;
+                user.City = await _context.Cities.FindAsync(editUserViewModel.CityId);
+                user.Document = editUserViewModel.Document;
+
+                await _userHelper.UpdateUserAsync(user);
+                return RedirectToAction("Index", "Home");
+            }
+
+            await FillDropDownListLocation(editUserViewModel);
+
+            return View(editUserViewModel);
+        }
+
+        private async Task FillDropDownListLocation(EditUserViewModel addUserViewModel)
+        {
+            addUserViewModel.Countries = await _ddlHelper.GetDDLCountriesAsync();
+            addUserViewModel.States = await _ddlHelper.GetDDLStatesAsync(addUserViewModel.CountryId);
+            addUserViewModel.Cities = await _ddlHelper.GetDDLCitiesAsync(addUserViewModel.StateId);
+        }
+
         [HttpGet]
         public JsonResult GetStates(Guid countryId)
         {
