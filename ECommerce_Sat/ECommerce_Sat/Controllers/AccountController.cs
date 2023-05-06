@@ -4,6 +4,7 @@ using ECommerce_Sat.Enum;
 using ECommerce_Sat.Helpers;
 using ECommerce_Sat.Models;
 using ECommerce_Sat.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -66,7 +67,7 @@ namespace ECommerce_Sat.Controllers
         public async Task<IActionResult> Register()
         {
             Guid emptyGuid = new Guid(); //New Guid for example: 1515fsaf-1215gas-1ga15-a41ga
-            
+
             AddUserViewModel addUserViewModel = new()
             {
                 Id = Guid.Empty,
@@ -128,7 +129,7 @@ namespace ECommerce_Sat.Controllers
         public async Task<IActionResult> EditUser()
         {
             User user = await _userHelper.GetUserAsync(User.Identity.Name);
-           
+
             if (user == null) return NotFound();
 
             EditUserViewModel editUserViewModel = new()
@@ -163,7 +164,7 @@ namespace ECommerce_Sat.Controllers
 
                 User user = await _userHelper.GetUserAsync(User.Identity.Name);
 
-                user.FirstName = editUserViewModel.FirstName; 
+                user.FirstName = editUserViewModel.FirstName;
                 user.LastName = editUserViewModel.LastName;
                 user.Address = editUserViewModel.Address;
                 user.PhoneNumber = editUserViewModel.PhoneNumber;
@@ -171,8 +172,9 @@ namespace ECommerce_Sat.Controllers
                 user.City = await _context.Cities.FindAsync(editUserViewModel.CityId);
                 user.Document = editUserViewModel.Document;
 
-                await _userHelper.UpdateUserAsync(user);
-                return RedirectToAction("Index", "Home");
+                IdentityResult result = await _userHelper.UpdateUserAsync(user);
+                if (result.Succeeded) return RedirectToAction("Index", "Home");
+                else ModelState.AddModelError(string.Empty, result.Errors.FirstOrDefault().Description);
             }
 
             await FillDropDownListLocation(editUserViewModel);
@@ -186,6 +188,37 @@ namespace ECommerce_Sat.Controllers
             addUserViewModel.States = await _ddlHelper.GetDDLStatesAsync(addUserViewModel.CountryId);
             addUserViewModel.Cities = await _ddlHelper.GetDDLCitiesAsync(addUserViewModel.StateId);
         }
+
+        public IActionResult ChangePassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ChangePassword(ChangePasswordViewModel changePasswordViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                if (changePasswordViewModel.OldPassword == changePasswordViewModel.NewPassword)
+                {
+                    ModelState.AddModelError(string.Empty, "Debes ingresar una contraseña diferente.");
+                    return View(changePasswordViewModel);
+                }
+
+                User user = await _userHelper.GetUserAsync(User.Identity.Name);
+                
+                if (user != null)
+                {
+                    IdentityResult result = await _userHelper.ChangePasswordAsync(user, changePasswordViewModel.OldPassword, changePasswordViewModel.NewPassword);
+                    if (result.Succeeded) return RedirectToAction("EditUser");
+                    else ModelState.AddModelError(string.Empty, result.Errors.FirstOrDefault().Description);
+                }
+                else ModelState.AddModelError(string.Empty, "Usuario no encontrado");
+            }
+
+            return View(changePasswordViewModel);
+        }
+
 
         [HttpGet]
         public JsonResult GetStates(Guid countryId)
