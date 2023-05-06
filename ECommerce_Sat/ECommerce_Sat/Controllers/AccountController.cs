@@ -134,9 +134,7 @@ namespace ECommerce_Sat.Controllers
 
             if (country == null) return null;
 
-            var jsonn = country.States.OrderBy(d => d.Name);
-
-            return Json(jsonn);
+            return Json(country.States.OrderBy(d => d.Name));
         }
 
         [HttpGet]
