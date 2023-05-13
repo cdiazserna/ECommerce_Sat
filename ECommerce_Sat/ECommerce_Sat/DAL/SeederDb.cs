@@ -2,6 +2,7 @@
 using ECommerce_Sat.Enum;
 using ECommerce_Sat.Helpers;
 using ECommerce_Sat.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce_Sat.DAL
 {
@@ -25,12 +26,13 @@ namespace ECommerce_Sat.DAL
 			await PopulateCountriesStatesCitiesAsync();
 			await PopulateRolesAsync();
             await PopulateUserAsync("Steve", "Jobs", "steve_jobs_admin@yopmail.com", "3002323232", "Street Apple", "102030", "SteveJobs.png", UserType.Admin);
-            await PopulateUserAsync("Bill", "Gates", "bill_gates_admin@yopmail.com", "4005656656", "Street Microsoft", "405060", "BillGates.png", UserType.User);
+            await PopulateUserAsync("Bill", "Gates", "bill_gates_user@yopmail.com", "4005656656", "Street Microsoft", "405060", "BillGates.png", UserType.User);
+			await PopulateProductAsync();
 
             await _context.SaveChangesAsync();
 		}
 
-		private async Task PopulateCategoriesAsync()
+        private async Task PopulateCategoriesAsync()
 		{
 			if (!_context.Categories.Any())
 			{
@@ -163,5 +165,43 @@ namespace ECommerce_Sat.DAL
 				await _userHelper.AddUserToRoleAsync(user, userType.ToString());
 			}
 		}
-	}
+
+
+        private async Task PopulateProductAsync()
+        {
+            if (!_context.Products.Any())
+            {
+                await AddProductAsync("Medias Grises", "Gray socks", 270000M, 12F, new List<string>() { "Ropa Interior", "Calzado" }, new List<string>() { "Medias1.png" });
+                await AddProductAsync("Medias Negras", "Black socks", 300000M, 12F, new List<string>() { "Ropa Interior", "Calzado" }, new List<string>() { "Medias2.png" });
+                await AddProductAsync("TV Samsung OLED", "Wonderful TV", 5000000M, 12F, new List<string>() { "Tecnología", "Gamers" }, new List<string>() { "TvOled.png", "TvOled2.png" });
+            }
+        }
+
+        private async Task AddProductAsync(string name, string description, decimal price, float stock, List<string> categories, List<string> images)
+        {
+            Product product = new()
+            {
+                Description = description,
+                Name = name,
+                Price = price,
+                Stock = stock,
+                ProductCategories = new List<ProductCategory>(),
+                ProductImages = new List<ProductImage>()
+            };
+
+            foreach (string? category in categories)
+            {
+                product.ProductCategories.Add(new ProductCategory { Category = await _context.Categories.FirstOrDefaultAsync(c => c.Name == category) });
+            }
+
+
+            foreach (string? image in images)
+            {
+                Guid imageId = await _azureBlobHelper.UploadAzureBlobAsync($"{Environment.CurrentDirectory}\\wwwroot\\images\\products\\{image}", "products");
+                product.ProductImages.Add(new ProductImage { ImageId = imageId });
+            }
+
+            _context.Products.Add(product);
+        }
+    }
 }
