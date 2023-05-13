@@ -242,5 +242,55 @@ namespace ECommerce_Sat.Controllers
             return RedirectToAction(nameof(Details), new { productId = productImage.Product.Id });
         }
 
+        public async Task<IActionResult> AddCategory(Guid? productId)
+        {
+            if (productId == null) return NotFound();
+
+            Product product = await _context.Products.FindAsync(productId);
+            if (product == null) return NotFound();
+
+            AddProductCategoryViewModel addProductCategoryViewModel = new()
+            {
+                ProductId = product.Id,
+                Categories = await _dropDownListHelper.GetDDLCategoriesAsync(),
+            };
+
+            return View(addProductCategoryViewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddCategory(AddProductCategoryViewModel addProductCategoryViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    Product product = await _context.Products.FindAsync(addProductCategoryViewModel.ProductId);
+                    Category category = await _context.Categories.FindAsync(addProductCategoryViewModel.CategoryId);
+
+                    if (product == null || category == null) return NotFound();
+
+                    ProductCategory productCategory = new()
+                    {
+                        Product = product,
+                        Category = category
+                    };
+
+                    _context.Add(productCategory);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Details), new { productId = product.Id });
+                }
+                catch (Exception exception)
+                {
+                    addProductCategoryViewModel.Categories = await _dropDownListHelper.GetDDLCategoriesAsync();
+                    ModelState.AddModelError(string.Empty, exception.Message);
+                }
+            }
+
+            addProductCategoryViewModel.Categories = await _dropDownListHelper.GetDDLCategoriesAsync();
+            return View(addProductCategoryViewModel);
+        }
+
     }
 }
