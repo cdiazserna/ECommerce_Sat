@@ -1,6 +1,7 @@
 ﻿using ECommerce_Sat.DAL.Entities;
 using ECommerce_Sat.Enum;
 using ECommerce_Sat.Helpers;
+using ECommerce_Sat.Services;
 
 namespace ECommerce_Sat.DAL
 {
@@ -8,12 +9,14 @@ namespace ECommerce_Sat.DAL
 	{
 		private readonly DataBaseContext _context;
 		private readonly IUserHelper _userHelper;
+        private readonly IAzureBlobHelper _azureBlobHelper;
 
-		public SeederDb(DataBaseContext context, IUserHelper userHelper)
+        public SeederDb(DataBaseContext context, IUserHelper userHelper, IAzureBlobHelper azureBlobHelper)
 		{
 			_context = context;
 			_userHelper = userHelper;
-		}
+            _azureBlobHelper = azureBlobHelper;
+        }
 
 		public async Task SeedAsync()
 		{
@@ -21,10 +24,10 @@ namespace ECommerce_Sat.DAL
 			await PopulateCategoriesAsync();
 			await PopulateCountriesStatesCitiesAsync();
 			await PopulateRolesAsync();
-			await PopulateUserAsync("First Name Admin", "Last Name Role", "adminrole@yopmail.com", "Phone 3002323232", "Add Street Fighter", "Doc 102030", UserType.Admin);
-			await PopulateUserAsync("First Name User", "Last Name Role", "userrole@yopmail.com", "Phone 3502323232", "Address Street Fighter 2", "Doc 405060", UserType.User);
+            await PopulateUserAsync("Steve", "Jobs", "steve_jobs_admin@yopmail.com", "3002323232", "Street Apple", "102030", "SteveJobs.png", UserType.Admin);
+            await PopulateUserAsync("Bill", "Gates", "bill_gates_admin@yopmail.com", "4005656656", "Street Microsoft", "405060", "BillGates.png", UserType.User);
 
-			await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
 		}
 
 		private async Task PopulateCategoriesAsync()
@@ -134,13 +137,14 @@ namespace ECommerce_Sat.DAL
 			await _userHelper.AddRoleAsync(UserType.User.ToString());
 		}
 
-		private async Task PopulateUserAsync(string firstName, string lastName, string email, string phone, string address, string document, UserType userType)
+		private async Task PopulateUserAsync(string firstName, string lastName, string email, string phone, string address, string document, string image, UserType userType)
 		{
 			User user = await _userHelper.GetUserAsync(email);
-
-			if (user == null)
+            if (user == null)
 			{
-				user = new User
+                Guid imageId = await _azureBlobHelper.UploadAzureBlobAsync($"{Environment.CurrentDirectory}\\wwwroot\\images\\users\\{image}", "users");
+
+                user = new User
 				{
 					CreatedDate = DateTime.Now,
 					FirstName = firstName,
@@ -152,6 +156,7 @@ namespace ECommerce_Sat.DAL
 					Document = document,
 					City = _context.Cities.FirstOrDefault(),
 					UserType = userType,
+					ImageId = imageId
 				};
 
 				await _userHelper.AddUserAsync(user, "123456");
