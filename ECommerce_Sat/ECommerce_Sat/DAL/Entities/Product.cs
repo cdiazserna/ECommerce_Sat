@@ -39,7 +39,7 @@ namespace ECommerce_Sat.DAL.Entities
 
         [Display(Name = "Foto")]
         public string ImageFullPath => ProductImages == null || ProductImages.Count == 0
-            ? $"https://localhost:7048/images/NoImage.png"
+            ? $"https://localhost:7158/images/NoImage.png"
             : ProductImages.FirstOrDefault().ImageFullPath;
     }
 }

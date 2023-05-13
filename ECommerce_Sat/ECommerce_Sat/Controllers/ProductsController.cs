@@ -60,6 +60,7 @@ namespace ECommerce_Sat.Controllers
                         Name = addProductViewModel.Name,
                         Price = addProductViewModel.Price,
                         Stock = addProductViewModel.Stock,
+                        CreatedDate = DateTime.Now,
                     };
 
                     product.ProductCategories = new List<ProductCategory>()
@@ -74,7 +75,10 @@ namespace ECommerce_Sat.Controllers
                     {
                         product.ProductImages = new List<ProductImage>()
                         {
-                            new ProductImage { ImageId = imageId }
+                            new ProductImage { 
+                                ImageId = imageId,
+                                CreatedDate = DateTime.Now,
+                            }
                         };
                     }
 
@@ -137,6 +141,7 @@ namespace ECommerce_Sat.Controllers
                 product.Name = editProductViewModel.Name;
                 product.Price = editProductViewModel.Price;
                 product.Stock = editProductViewModel.Stock;
+                product.ModifiedDate = DateTime.Now;
 
                 _context.Update(product);
                 await _context.SaveChangesAsync();
@@ -172,6 +177,52 @@ namespace ECommerce_Sat.Controllers
             return View(product);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> AddImage(Guid? productId)
+        {
+            if (productId == null) return NotFound();
 
+            Product product = await _context.Products.FindAsync(productId);
+            if (product == null) return NotFound();
+
+            AddProductImageViewModel addProductImageViewModel = new()
+            {
+                ProductId = product.Id,
+            };
+
+            return View(addProductImageViewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddImage(AddProductImageViewModel addProductImageViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    Guid imageId = await _azureBlobHelper.UploadAzureBlobAsync(addProductImageViewModel.ImageFile, "products");
+
+                    Product product = await _context.Products.FindAsync(addProductImageViewModel.ProductId);
+                
+                    ProductImage productImage = new()
+                    {
+                        Product = product,
+                        ImageId = imageId,
+                        CreatedDate = DateTime.Now,
+                    };
+
+                    _context.Add(productImage);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Details), new { productId = product.Id });
+                }
+                catch (Exception exception)
+                {
+                    ModelState.AddModelError(string.Empty, exception.Message);
+                }
+            }
+
+            return View(addProductImageViewModel);
+        }
     }
 }
