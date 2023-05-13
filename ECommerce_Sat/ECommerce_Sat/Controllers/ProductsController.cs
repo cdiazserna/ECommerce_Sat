@@ -5,6 +5,7 @@ using ECommerce_Sat.Models;
 using ECommerce_Sat.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis;
 using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce_Sat.Controllers
@@ -246,13 +247,23 @@ namespace ECommerce_Sat.Controllers
         {
             if (productId == null) return NotFound();
 
-            Product product = await _context.Products.FindAsync(productId);
+            Product product = await _context.Products
+                .Include(p => p.ProductCategories)
+                .ThenInclude(pc => pc.Category)
+                .FirstOrDefaultAsync(p => p.Id == productId);
+
             if (product == null) return NotFound();
+
+            List<Category> categories = product.ProductCategories.Select(pc => new Category
+            {
+                Id = pc.Category.Id,
+                Name = pc.Category.Name, //Aquí coloco las N categoríes que le agregué a ese prod: GAMERS, TECHOLOGY
+            }).ToList();
 
             AddProductCategoryViewModel addProductCategoryViewModel = new()
             {
                 ProductId = product.Id,
-                Categories = await _dropDownListHelper.GetDDLCategoriesAsync(),
+                Categories = await _dropDownListHelper.GetDDLCategoriesAsync(categories),
             };
 
             return View(addProductCategoryViewModel);
@@ -262,11 +273,15 @@ namespace ECommerce_Sat.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddCategory(AddProductCategoryViewModel addProductCategoryViewModel)
         {
+            Product product = await _context.Products
+                .Include(p => p.ProductCategories)
+                .ThenInclude(pc => pc.Category)
+                .FirstOrDefaultAsync(p => p.Id == addProductCategoryViewModel.ProductId);
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    Product product = await _context.Products.FindAsync(addProductCategoryViewModel.ProductId);
                     Category category = await _context.Categories.FindAsync(addProductCategoryViewModel.CategoryId);
 
                     if (product == null || category == null) return NotFound();
@@ -288,7 +303,13 @@ namespace ECommerce_Sat.Controllers
                 }
             }
 
-            addProductCategoryViewModel.Categories = await _dropDownListHelper.GetDDLCategoriesAsync();
+            List<Category> categories = product.ProductCategories.Select(pc => new Category
+            {
+                Id = pc.Category.Id,
+                Name = pc.Category.Name, //Aquí coloco las N categoríes que le agregué a ese prod: GAMERS, TECHOLOGY
+            }).ToList();
+
+            addProductCategoryViewModel.Categories = await _dropDownListHelper.GetDDLCategoriesAsync(categories);
             return View(addProductCategoryViewModel);
         }
 

@@ -11,7 +11,7 @@ namespace ECommerce_Sat.DAL
         {
         }
 
-        //Aquí estoy mappeando mi entidad para convertirla en un DBSet (tabla)
+        //Aquí estoy mapeando mi entidad para convertirla en un DBSet (tabla)
         public DbSet<Country> Countries { get; set; } //La tabla se debe llamar en plural: Countries
         public DbSet<Category> Categories { get; set; }
         public DbSet<State> States { get; set; }

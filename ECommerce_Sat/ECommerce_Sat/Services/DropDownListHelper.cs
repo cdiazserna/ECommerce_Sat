@@ -1,4 +1,5 @@
 ﻿using ECommerce_Sat.DAL;
+using ECommerce_Sat.DAL.Entities;
 using ECommerce_Sat.Helpers;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -29,6 +30,35 @@ namespace ECommerce_Sat.Services
             {
                 Text = "Seleccione una categoría...",
                 Value = Guid.Empty.ToString(), //Esto significa: "00000000-0000-0000-0000-000000000000"
+                Selected = true
+            });
+
+            return listCategories;
+        }
+
+
+        public async Task<IEnumerable<SelectListItem>> GetDDLCategoriesAsync(IEnumerable<Category> filterCategories)
+        {
+            List<Category> categories = await _context.Categories.ToListAsync(); //me traigo TODAS las categorías que tengo guardadas en BD
+            List<Category> categoriesFiltered = new(); //aquí declaro una lista vacía que es la que tendrá los filtros
+
+            foreach (Category category in categories)
+                if (!filterCategories.Any(c => c.Id == category.Id))
+                    categoriesFiltered.Add(category);
+
+            List<SelectListItem> listCategories = categoriesFiltered
+                .Select(c => new SelectListItem
+                {
+                    Text = c.Name, //Col
+                    Value = c.Id.ToString(), //Guid                    
+                })
+                .OrderBy(c => c.Text)
+                .ToList();
+
+            listCategories.Insert(0, new SelectListItem
+            {
+                Text = "Seleccione una categoría...",
+                Value = Guid.Empty.ToString(),
                 Selected = true
             });
 
