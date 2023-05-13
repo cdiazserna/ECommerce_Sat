@@ -157,5 +157,21 @@ namespace ECommerce_Sat.Controllers
             return View(editProductViewModel);
         }
 
+        public async Task<IActionResult> Details(Guid? productId)
+        {
+            if (productId == null) return NotFound();
+
+            Product product = await _context.Products
+                .Include(p => p.ProductImages) // Inner Join entre Product - ProductImages
+                .Include(p => p.ProductCategories) // Inner Join entre Product - ProductCategories
+                .ThenInclude(pc => pc.Category) // Inner Join entre ProductCategories - Categories
+                .FirstOrDefaultAsync(p => p.Id == productId);
+            
+            if (product == null) return NotFound();
+
+            return View(product);
+        }
+
+
     }
 }
