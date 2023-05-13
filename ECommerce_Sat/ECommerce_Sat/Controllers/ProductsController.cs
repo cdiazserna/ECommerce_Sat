@@ -306,6 +306,35 @@ namespace ECommerce_Sat.Controllers
             return RedirectToAction(nameof(Details), new { productId = productCategory.Product.Id });
         }
 
+        public async Task<IActionResult> Delete(Guid? productId)
+        {
+            if (productId == null) return NotFound();
 
+            Product product = await _context.Products
+                .Include(p => p.ProductCategories)
+                .Include(p => p.ProductImages)
+                .FirstOrDefaultAsync(p => p.Id == productId);
+            if (product == null) return NotFound();
+
+            return View(product);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(Product productModel)
+        {
+            Product product = await _context.Products
+                .Include(p => p.ProductImages)
+                .Include(p => p.ProductCategories)
+                .FirstOrDefaultAsync(p => p.Id == productModel.Id);
+
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
+
+            foreach (ProductImage productImage in product.ProductImages)
+                await _azureBlobHelper.DeleteAzureBlobAsync(productImage.ImageId, "products");
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }
