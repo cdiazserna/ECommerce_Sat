@@ -102,6 +102,5 @@ namespace ECommerce_Sat.Controllers
             addProductViewModel.Categories = await _dropDownListHelper.GetDDLCategoriesAsync();
             return View(addProductViewModel);
         }
-
     }
 }

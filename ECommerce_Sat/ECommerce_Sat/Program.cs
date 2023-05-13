@@ -3,7 +3,9 @@ using ECommerce_Sat.DAL.Entities;
 using ECommerce_Sat.Helpers;
 using ECommerce_Sat.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,6 +33,19 @@ builder.Services.AddScoped<IDropDownListHelper, DropDownListHelper>();
 //Builder para llamar la interfaz IDropDownListHelper.cs
 builder.Services.AddScoped<IAzureBlobHelper, AzureBlobHelper>();
 
+var supportedCultures = new[]
+{
+    new CultureInfo("es-CO")
+};
+
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    options.DefaultRequestCulture = new RequestCulture("es-CO");
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+});
+
+
 builder.Services.AddIdentity<User, IdentityRole>(io =>
 {
 	io.User.RequireUniqueEmail = true;
@@ -50,6 +65,8 @@ builder.Services.ConfigureApplicationCookie(options =>
 
 
 var app = builder.Build();
+
+app.UseRequestLocalization();
 
 SeederData();
 void SeederData()
