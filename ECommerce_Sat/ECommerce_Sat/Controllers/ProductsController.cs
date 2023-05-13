@@ -292,5 +292,20 @@ namespace ECommerce_Sat.Controllers
             return View(addProductCategoryViewModel);
         }
 
+        public async Task<IActionResult> DeleteCategory(Guid? categoryId)
+        {
+            if (categoryId == null) return NotFound();
+
+            ProductCategory productCategory = await _context.ProductCategories
+                .Include(pc => pc.Product)
+                .FirstOrDefaultAsync(pc => pc.Id == categoryId);
+            if (productCategory == null) return NotFound();
+
+            _context.ProductCategories.Remove(productCategory);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Details), new { productId = productCategory.Product.Id });
+        }
+
+
     }
 }
