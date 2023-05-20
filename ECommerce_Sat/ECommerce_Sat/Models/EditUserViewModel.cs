@@ -37,7 +37,7 @@ namespace ECommerce_Sat.Models
 
         [Display(Name = "Foto")]
         public string ImageFullPath => ImageId == Guid.Empty
-            ? $"https://localhost:7048/images/noimage.png"
+            ? $"https://localhost:7048/images/NoImage.png"
             : $"https://sales2023.blob.core.windows.net/users/{ImageId}";
 
         [Display(Name = "Image")]

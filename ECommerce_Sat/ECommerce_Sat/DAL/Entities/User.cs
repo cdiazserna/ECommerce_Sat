@@ -38,7 +38,7 @@ namespace ECommerce_Sat.DAL.Entities
 		//TODO: Pending to put the correct paths
 		[Display(Name = "Foto")]
 		public string ImageFullPath => ImageId == Guid.Empty
-			? $"https://localhost:7158/images/noimage.png"
+			? $"https://localhost:7158/images/NoImage.png"
 			: $"https://sales2023.blob.core.windows.net/users/{ImageId}";
 
 		[Display(Name = "Tipo de usuario")]
