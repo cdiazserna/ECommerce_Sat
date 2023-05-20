@@ -233,5 +233,51 @@ namespace ECommerce_Sat.Controllers
             return RedirectToAction(nameof(ShowCart));
         }
 
+        public async Task<IActionResult> EditTemporalSale(Guid? temporalSaleId)
+        {
+            if (temporalSaleId == null) return NotFound();
+
+            TemporalSale temporalSale = await _context.TemporalSales.FindAsync(temporalSaleId);
+            if (temporalSale == null) return NotFound();
+
+            EditTemporalSaleViewModel editTemporalSaleViewModel = new()
+            {
+                Id = temporalSale.Id,
+                Quantity = temporalSale.Quantity,
+                Remarks = temporalSale.Remarks,
+                ModifiedDate = DateTime.Now,
+            };
+
+            return View(editTemporalSaleViewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditTemporalSale(Guid? temporalSaleId, EditTemporalSaleViewModel editTemporalSaleViewModel)
+        {
+            if (temporalSaleId != editTemporalSaleViewModel.Id) return NotFound();
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    TemporalSale temporalSale = await _context.TemporalSales.FindAsync(temporalSaleId);
+                    temporalSale.Quantity = editTemporalSaleViewModel.Quantity;
+                    temporalSale.Remarks = editTemporalSaleViewModel.Remarks;
+                    _context.Update(temporalSale);
+                    await _context.SaveChangesAsync();
+                }
+                catch (Exception exception)
+                {
+                    ModelState.AddModelError(string.Empty, exception.Message);
+                    return View(editTemporalSaleViewModel);
+                }
+
+                return RedirectToAction(nameof(ShowCart));
+            }
+
+            return View(editTemporalSaleViewModel);
+        }
+
     }
 }
