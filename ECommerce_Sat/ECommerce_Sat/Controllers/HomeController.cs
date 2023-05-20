@@ -2,6 +2,7 @@
 using ECommerce_Sat.DAL.Entities;
 using ECommerce_Sat.Helpers;
 using ECommerce_Sat.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
@@ -154,6 +155,27 @@ namespace ECommerce_Sat.Controllers
             _context.TemporalSales.Add(temporalSale);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize] //Etiqueta para que solo usuarios logueados puedan acceder a este método.
+        public async Task<IActionResult> ShowCart()
+        {
+            User user = await _userHelper.GetUserAsync(User.Identity.Name);
+            if (user == null) return NotFound();
+
+            List<TemporalSale>? temporalSales = await _context.TemporalSales
+                .Include(ts => ts.Product)
+                .ThenInclude(p => p.ProductImages)
+                .Where(ts => ts.User.Id == user.Id)
+                .ToListAsync();
+
+            ShowCartViewModel showCartViewModel = new()
+            {
+                User = user,
+                TemporalSales = temporalSales,
+            };
+
+            return View(showCartViewModel);
         }
 
     }
