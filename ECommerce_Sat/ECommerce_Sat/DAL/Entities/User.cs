@@ -6,7 +6,8 @@ namespace ECommerce_Sat.DAL.Entities
 {
 	public class User : IdentityUser
 	{
-		[Display(Name = "Fecha de creación")]
+        public ICollection<Order> Orders { get; set; }
+        [Display(Name = "Fecha de creación")]
 		public virtual DateTime? CreatedDate { get; set; }
 
 		[Display(Name = "Fecha de modificación")]
@@ -53,6 +54,5 @@ namespace ECommerce_Sat.DAL.Entities
 
 		[Display(Name = "Usuario")]
 		public string FullNameWithDocument => $"{FirstName} {LastName} - {Document}";
-
 	}
 }

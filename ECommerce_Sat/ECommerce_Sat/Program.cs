@@ -33,6 +33,9 @@ builder.Services.AddScoped<IDropDownListHelper, DropDownListHelper>();
 //Builder para llamar la interfaz IDropDownListHelper.cs
 builder.Services.AddScoped<IAzureBlobHelper, AzureBlobHelper>();
 
+//Builder para llamar la interfaz IOrderHelper.cs
+builder.Services.AddScoped<IOrderHelper, OrderHelper>();
+
 var supportedCultures = new[]
 {
     new CultureInfo("es-CO")

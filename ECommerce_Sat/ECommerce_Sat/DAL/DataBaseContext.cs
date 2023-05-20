@@ -1,5 +1,4 @@
 ﻿using ECommerce_Sat.DAL.Entities;
-using ECommerce_Sat.Models;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,6 +19,8 @@ namespace ECommerce_Sat.DAL
         public DbSet<ProductCategory> ProductCategories { get; set; }
         public DbSet<ProductImage> ProductImages { get; set; }
         public DbSet<TemporalSale> TemporalSales { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
 
         //Vamos a crear un índice para la tabla Countries
         protected override void OnModelCreating(ModelBuilder modelBuilder)

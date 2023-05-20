@@ -1,7 +1,9 @@
-﻿using ECommerce_Sat.DAL;
+﻿using ECommerce_Sat.Common;
+using ECommerce_Sat.DAL;
 using ECommerce_Sat.DAL.Entities;
 using ECommerce_Sat.Helpers;
 using ECommerce_Sat.Models;
+using ECommerce_Sat.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,12 +16,14 @@ namespace ECommerce_Sat.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly DataBaseContext _context;
         private readonly IUserHelper _userHelper;
+        private readonly IOrderHelper _orderHelper;
 
-        public HomeController(ILogger<HomeController> logger, DataBaseContext context, IUserHelper userHelper)
+        public HomeController(ILogger<HomeController> logger, DataBaseContext context, IUserHelper userHelper, IOrderHelper orderHelper)
         {
             _logger = logger;
             _context = context;
             _userHelper = userHelper;
+            _orderHelper = orderHelper;
         }
 
         public async Task<IActionResult> Index()
@@ -184,7 +188,7 @@ namespace ECommerce_Sat.Controllers
             ShowCartViewModel showCartViewModel = new()
             {
                 User = user,
-                TemporalSales = temporalSales,
+                TemporalSales = temporalSales
             };
 
             return View(showCartViewModel);
@@ -279,5 +283,31 @@ namespace ECommerce_Sat.Controllers
             return View(editTemporalSaleViewModel);
         }
 
+        [Authorize]
+        public IActionResult OrderSuccess()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmOrder(ShowCartViewModel showCartViewModel)
+        {
+            User user = await _userHelper.GetUserAsync(User.Identity.Name);
+            if (user == null) return NotFound();
+
+            showCartViewModel.User = user;
+            showCartViewModel.TemporalSales = await _context.TemporalSales
+                .Include(ts => ts.Product)
+                .ThenInclude(p => p.ProductImages)
+                .Where(ts => ts.User.Id == user.Id)
+            .ToListAsync();
+
+            Response response = await _orderHelper.ProcessOrderAsync(showCartViewModel);
+            if (response.IsSuccess) return RedirectToAction(nameof(OrderSuccess));
+
+            ModelState.AddModelError(string.Empty, response.Message);
+            return View(showCartViewModel);
+        }
     }
 }
