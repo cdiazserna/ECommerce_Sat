@@ -19,6 +19,7 @@ namespace ECommerce_Sat.DAL
         public DbSet<Product> Products { get; set; }
         public DbSet<ProductCategory> ProductCategories { get; set; }
         public DbSet<ProductImage> ProductImages { get; set; }
+        public DbSet<TemporalSale> TemporalSales { get; set; }
 
         //Vamos a crear un índice para la tabla Countries
         protected override void OnModelCreating(ModelBuilder modelBuilder)

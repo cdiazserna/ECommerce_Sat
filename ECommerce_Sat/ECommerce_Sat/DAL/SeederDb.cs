@@ -171,17 +171,21 @@ namespace ECommerce_Sat.DAL
         {
             if (!_context.Products.Any())
             {
-                await AddProductAsync("Medias Grises", "Gray socks", 270000M, 12F, new List<string>() { "Ropa Interior", "Calzado" }, new List<string>() { "Medias1.png" });
-                await AddProductAsync("Medias Negras", "Black socks", 300000M, 12F, new List<string>() { "Ropa Interior", "Calzado" }, new List<string>() { "Medias2.png" });
-                await AddProductAsync("TV Samsung OLED", "Wonderful TV", 5000000M, 12F, new List<string>() { "Tecnología", "Gamers" }, new List<string>() { "TvOled.png", "TvOled2.png" });
+                await AddProductAsync("Medias Grises", 270000M, 12F, new List<string>() { "Ropa Interior", "Calzado" }, new List<string>() { "Medias1.png" });
+                await AddProductAsync("Medias Negras", 300000M, 12F, new List<string>() { "Ropa Interior", "Calzado" }, new List<string>() { "Medias2.png" });
+                await AddProductAsync("TV Samsung OLED", 5000000M, 12F, new List<string>() { "Tecnología", "Gamers" }, new List<string>() { "TvOled.png", "TvOled2.png" });
+                await AddProductAsync("Play Station 5", 5000000M, 12F, new List<string>() { "Gamers" }, new List<string>() { "PS5.png", "PS52.png" });
+                await AddProductAsync("Bull Dog Francés", 10000000M, 12F, new List<string>() { "Mascotas" }, new List<string>() { "Frenchie1.png", "Frenchie2.png", "Frenchie3.png" });
+                await AddProductAsync("Cepillo de dientes", 5000M, 12F, new List<string>() { "Implementos de Aseo" }, new List<string>() { "CepilloDientes.png" });
+                await AddProductAsync("Crema dental Pro Alivio", 25000M, 12F, new List<string>() { "Implementos de Aseo" }, new List<string>() { "CremaDental1.png", "CremaDental2.png" });
             }
         }
 
-        private async Task AddProductAsync(string name, string description, decimal price, float stock, List<string> categories, List<string> images)
+        private async Task AddProductAsync(string name, decimal price, float stock, List<string> categories, List<string> images)
         {
             Product product = new()
             {
-                Description = description,
+                Description = name,
                 Name = name,
                 Price = price,
                 Stock = stock,
