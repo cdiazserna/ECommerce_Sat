@@ -42,7 +42,7 @@ else
                                     </p>
                                 </div>
                                 <div class="card_foot">
-                                    <button asp-action="Details" asp-route-productId="@item.Id" class="btn btn-secondary" disabled>Detalles</button>
+                                    <button asp-action="DetailsProduct" asp-route-productId="@item.Id" class="btn btn-secondary" disabled>Detalles</button>
                                     <button asp-action="AddProductInCart" asp-route-productId="@item.Id" class="btn btn-primary" disabled>Agregar</button>
                                 </div>
                             </div>
@@ -61,7 +61,7 @@ else
                                     </p>
                                 </div>
                                 <div class="card_foot">
-                                    <a asp-action="Details" asp-route-productId="@item.Id" class="btn btn-secondary">Detalles</a>
+                                    <a asp-action="DetailsProduct" asp-route-productId="@item.Id" class="btn btn-secondary">Detalles</a>
                                     <a asp-action="AddProductInCart" asp-route-productId="@item.Id" class="btn btn-primary">Agregar</a>
                                 </div>
                             </div>

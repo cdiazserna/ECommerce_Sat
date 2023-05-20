@@ -97,5 +97,64 @@ namespace ECommerce_Sat.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+
+        public async Task<IActionResult> DetailsProduct(Guid? productId)
+        {
+            if (productId == null) return NotFound();
+
+            Product product = await _context.Products
+                .Include(p => p.ProductImages)
+                .Include(p => p.ProductCategories)
+                .ThenInclude(pc => pc.Category)
+                .FirstOrDefaultAsync(p => p.Id == productId);
+
+            if (product == null) return NotFound();
+
+            string categories = string.Empty;
+
+            foreach (ProductCategory? category in product.ProductCategories)
+                categories += $"{category.Category.Name}, ";
+
+            categories = categories.Substring(0, categories.Length - 2);
+
+            DetailsProductToCartViewModel detailsProductToCartViewModel = new()
+            {
+                Categories = categories,
+                Description = product.Description,
+                Id = product.Id,
+                Name = product.Name,
+                Price = product.Price,
+                ProductImages = product.ProductImages,
+                Quantity = 1,
+                Stock = product.Stock,
+            };
+
+            return View(detailsProductToCartViewModel);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DetailsProduct(DetailsProductToCartViewModel detailsProductToCartViewModel)
+        {
+            if (!User.Identity.IsAuthenticated) return RedirectToAction("Login", "Account");
+
+            Product product = await _context.Products.FindAsync(detailsProductToCartViewModel.Id);
+            User user = await _userHelper.GetUserAsync(User.Identity.Name);
+
+            if (product == null || user == null) return NotFound();
+
+            TemporalSale temporalSale = new()
+            {
+                Product = product,
+                Quantity = detailsProductToCartViewModel.Quantity,
+                Remarks = detailsProductToCartViewModel.Remarks,
+                User = user
+            };
+
+            _context.TemporalSales.Add(temporalSale);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }
