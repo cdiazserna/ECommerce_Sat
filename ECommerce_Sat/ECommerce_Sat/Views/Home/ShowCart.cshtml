@@ -98,7 +98,14 @@
                                 <td class="d-flex flex-column">
                                     <a asp-action="IncreaseQuantity" asp-route-temporalSaleId="@item.Id" class="btn btn-primary mb-2">+</a>
                                     <br>
-                                    <a asp-action="DecreaseQuantity" asp-route-temporalSaleId="@item.Id" class="btn btn-secondary">-</a>
+                                    @if (item.Quantity < 2)
+                                    {
+                                        <button asp-action="DecreaseQuantity" asp-route-temporalSaleId="@item.Id" class="btn btn-secondary" disabled>-</button>
+                                    }
+                                    else
+                                    {
+                                        <a asp-action="DecreaseQuantity" asp-route-temporalSaleId="@item.Id" class="btn btn-secondary">-</a>
+                                    }
                                 </td>
                                 <td>
                                     @Html.DisplayFor(modelItem => item.Value)
