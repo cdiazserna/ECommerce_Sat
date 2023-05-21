@@ -96,13 +96,17 @@ namespace ECommerce_Sat.Controllers
                 .FirstOrDefaultAsync();
 
             if (existingTemporalSale != null)
+            {
                 // Si existe una entrada, incrementa la cantidad
                 existingTemporalSale.Quantity += 1;
+                existingTemporalSale.ModifiedDate = DateTime.Now;
+            }
             else
             {
                 // Si no existe una entrada, crea una nueva
                 TemporalSale temporalSale = new()
                 {
+                    CreatedDate = DateTime.Now,
                     Product = product,
                     Quantity = 1,
                     User = user
@@ -160,21 +164,37 @@ namespace ECommerce_Sat.Controllers
 
             if (product == null || user == null) return NotFound();
 
-            TemporalSale temporalSale = new()
-            {
-                Product = product,
-                Quantity = detailsProductToCartViewModel.Quantity,
-                Remarks = detailsProductToCartViewModel.Remarks,
-                User = user
-            };
+            // Busca una entrada existente en la tabla TemporalSale para este producto y usuario
+            TemporalSale existingTemporalSale = await _context.TemporalSales
+                .Where(t => t.Product.Id == detailsProductToCartViewModel.Id && t.User.Id == user.Id)
+                .FirstOrDefaultAsync();
 
-            _context.TemporalSales.Add(temporalSale);
+            if (existingTemporalSale != null)
+            {
+                // Si existe una entrada, incrementa la cantidad
+                existingTemporalSale.Quantity += detailsProductToCartViewModel.Quantity;
+                existingTemporalSale.ModifiedDate = DateTime.Now;
+            }
+            else
+            {
+                // Si no existe una entrada, crea una nueva
+                TemporalSale temporalSale = new()
+                {
+                    Product = product,
+                    Quantity = 1,
+                    User = user,
+                    Remarks = detailsProductToCartViewModel.Remarks,
+                };
+
+                _context.TemporalSales.Add(temporalSale);
+            }
+
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
         [Authorize] //Etiqueta para que solo usuarios logueados puedan acceder a este método.
-        public async Task<IActionResult> ShowCart()
+        public async Task<IActionResult> ShowCartAndConfirm()
         {
             User user = await _userHelper.GetUserAsync(User.Identity.Name);
             if (user == null) return NotFound();
@@ -204,11 +224,12 @@ namespace ECommerce_Sat.Controllers
             if (temporalSale.Quantity > 1)
             {
                 temporalSale.Quantity--;
+                temporalSale.ModifiedDate = DateTime.Now;
                 _context.TemporalSales.Update(temporalSale);
                 await _context.SaveChangesAsync();
             }
 
-            return RedirectToAction(nameof(ShowCart));
+            return RedirectToAction(nameof(ShowCartAndConfirm));
         }
 
         public async Task<IActionResult> IncreaseQuantity(Guid? temporalSaleId)
@@ -219,10 +240,11 @@ namespace ECommerce_Sat.Controllers
             if (temporalSale == null) return NotFound();
 
             temporalSale.Quantity++;
+            temporalSale.ModifiedDate = DateTime.Now;
             _context.TemporalSales.Update(temporalSale);
             await _context.SaveChangesAsync();
 
-            return RedirectToAction(nameof(ShowCart));
+            return RedirectToAction(nameof(ShowCartAndConfirm));
         }
 
         public async Task<IActionResult> DeleteTemporalSale(Guid? temporalSaleId)
@@ -234,7 +256,7 @@ namespace ECommerce_Sat.Controllers
 
             _context.TemporalSales.Remove(temporalSale);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(ShowCart));
+            return RedirectToAction(nameof(ShowCartAndConfirm));
         }
 
         public async Task<IActionResult> EditTemporalSale(Guid? temporalSaleId)
@@ -268,6 +290,7 @@ namespace ECommerce_Sat.Controllers
                     TemporalSale temporalSale = await _context.TemporalSales.FindAsync(temporalSaleId);
                     temporalSale.Quantity = editTemporalSaleViewModel.Quantity;
                     temporalSale.Remarks = editTemporalSaleViewModel.Remarks;
+                    temporalSale.ModifiedDate = DateTime.Now;
                     _context.Update(temporalSale);
                     await _context.SaveChangesAsync();
                 }
@@ -277,7 +300,7 @@ namespace ECommerce_Sat.Controllers
                     return View(editTemporalSaleViewModel);
                 }
 
-                return RedirectToAction(nameof(ShowCart));
+                return RedirectToAction(nameof(ShowCartAndConfirm));
             }
 
             return View(editTemporalSaleViewModel);
@@ -291,7 +314,7 @@ namespace ECommerce_Sat.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> ConfirmOrder(ShowCartViewModel showCartViewModel)
+        public async Task<IActionResult> ShowCartAndConfirm(ShowCartViewModel showCartViewModel)
         {
             User user = await _userHelper.GetUserAsync(User.Identity.Name);
             if (user == null) return NotFound();

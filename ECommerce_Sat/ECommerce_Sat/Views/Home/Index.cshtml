@@ -6,7 +6,7 @@
 
 @if (Model.Quantity > 0)
 {
-    <a asp-action="ShowCart" class="btn btn-outline-primary">Ver Carro de Compras (@Model.Quantity)</a>
+    <a asp-action="ShowCartAndConfirm" class="btn btn-outline-primary">Ver Carro de Compras (@Model.Quantity)</a>
 }
 
 @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
