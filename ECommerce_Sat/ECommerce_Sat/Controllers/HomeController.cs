@@ -332,5 +332,23 @@ namespace ECommerce_Sat.Controllers
             ModelState.AddModelError(string.Empty, response.Message);
             return View(showCartViewModel);
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteAll()
+        {
+            User user = await _userHelper.GetUserAsync(User.Identity.Name);
+            if (user == null) return NotFound();
+
+            List<TemporalSale> temporalSale = await _context.TemporalSales
+                .Where(ts => ts.User.Id == user.Id)
+                .ToListAsync();
+
+            _context.RemoveRange(temporalSale);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
     }
 }
