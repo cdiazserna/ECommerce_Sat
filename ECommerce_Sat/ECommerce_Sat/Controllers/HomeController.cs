@@ -26,21 +26,40 @@ namespace ECommerce_Sat.Controllers
             _orderHelper = orderHelper;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string sortOrder)
         {
-            List<Product>? products = await _context.Products
-                .Include(p => p.ProductImages)
-                .Include(p => p.ProductCategories)
-                .OrderBy(p => p.Description)
-                .ToListAsync();
-
-            //Variables de Sesión
+            ViewBag.NameSortParm = string.IsNullOrEmpty(sortOrder) ? "NameDesc" : "";
+            ViewBag.PriceSortParm = sortOrder == "Price" ? "PriceDesc" : "Price";
             ViewBag.UserFullName = GetUserFullName();
 
-            HomeViewModel homeViewModel = new()
+            IQueryable<Product> query = _context.Products
+                .Include(p => p.ProductImages)
+                .Include(p => p.ProductCategories);
+
+            //List<Product>? products = await _context.Products
+            //   .Include(p => p.ProductImages)
+            //   .Include(p => p.ProductCategories)
+            //   .OrderBy(p => p.Description)
+            //   .ToListAsync();
+
+            switch (sortOrder)
             {
-                Products = products
-            };
+                case "NameDesc":
+                    query = query.OrderByDescending(p => p.Name);
+                    break;
+                case "Price":
+                    query = query.OrderBy(p => p.Price);
+                    break;
+                case "PriceDesc":
+                    query = query.OrderByDescending(p => p.Price);
+                    break;
+                default:
+                    query = query.OrderBy(p => p.Name);
+                    break;
+            }
+
+            //Begins New change
+            HomeViewModel homeViewModel = new() { Products = await query.ToListAsync() };
 
             User user = await _userHelper.GetUserAsync(User.Identity.Name);
             if (user != null)
@@ -51,7 +70,9 @@ namespace ECommerce_Sat.Controllers
             }
 
             return View(homeViewModel);
+            //Ends New change
         }
+
 
         private string GetUserFullName()
         {

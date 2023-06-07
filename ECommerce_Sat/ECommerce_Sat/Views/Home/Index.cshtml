@@ -4,10 +4,21 @@
     ViewData["Title"] = "Index";
 }
 
-@if (Model.Quantity > 0)
-{
-    <a asp-action="ShowCartAndConfirm" class="btn btn-outline-primary">Ver Carro de Compras (@Model.Quantity)</a>
-}
+<div class="mb-2 d-flex justify-content-between">
+    <div>
+        <h5>Orderar por:</h5>
+        <a asp-action="Index" asp-route-sortOrder="@ViewBag.NameSortParm" class="btn btn-outline-info">Nombre</a>&nbsp;&nbsp;
+        <a asp-action="Index" asp-route-sortOrder="@ViewBag.PriceSortParm" class="btn btn-outline-info">Precio</a>
+    </div>
+    <div>
+        @if (Model.Quantity > 0)
+        {
+            <br />
+            <a asp-action="ShowCartAndConfirm" class="btn btn-outline-primary">Ver Carro de Compras (@Model.Quantity)</a>
+        }
+    </div>
+</div>
+
 
 @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
 {
