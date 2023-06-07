@@ -89,6 +89,27 @@ namespace ECommerce_Sat.Controllers
             return RedirectToAction(nameof(Details), new { orderId = order.Id });
         }
 
+        public async Task<IActionResult> ConfirmOrder(Guid? orderId)
+        {
+            if (orderId == null) return NotFound();
+
+            Order order = await _context.Orders.FindAsync(orderId);
+            if (order == null) return NotFound();
+
+            if (order.OrderStatus != OrderStatus.Enviado)
+                _flashMessage.Danger(String.Format("Solo se pueden enviar pedidos que estén en estado '{0}'.", OrderStatus.Enviado));
+            else
+            {
+                order.OrderStatus = OrderStatus.Confirmado;
+                order.ModifiedDate = DateTime.Now;
+                _context.Orders.Update(order);
+                await _context.SaveChangesAsync();
+                _flashMessage.Confirmation(String.Format("El estado del pedido ha sido cambiado a '{0}'.", OrderStatus.Confirmado));
+
+            }
+
+            return RedirectToAction(nameof(Details), new { orderId = order.Id });
+        }
 
     }
 }
