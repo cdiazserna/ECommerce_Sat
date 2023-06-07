@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using System.Text.Json.Serialization;
+using Vereyon.Web;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +36,8 @@ builder.Services.AddScoped<IAzureBlobHelper, AzureBlobHelper>();
 
 //Builder para llamar la interfaz IOrderHelper.cs
 builder.Services.AddScoped<IOrderHelper, OrderHelper>();
+
+builder.Services.AddFlashMessage();
 
 var supportedCultures = new[]
 {
