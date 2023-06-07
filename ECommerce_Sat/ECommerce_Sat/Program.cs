@@ -37,6 +37,7 @@ builder.Services.AddScoped<IAzureBlobHelper, AzureBlobHelper>();
 //Builder para llamar la interfaz IOrderHelper.cs
 builder.Services.AddScoped<IOrderHelper, OrderHelper>();
 
+//Builder para mensajes Toast
 builder.Services.AddFlashMessage();
 
 var supportedCultures = new[]
