@@ -26,21 +26,24 @@ namespace ECommerce_Sat.Controllers
             _orderHelper = orderHelper;
         }
 
-        public async Task<IActionResult> Index(string sortOrder)
+        public async Task<IActionResult> Index(string sortOrder, string searchString)
         {
             ViewBag.NameSortParm = string.IsNullOrEmpty(sortOrder) ? "NameDesc" : "";
             ViewBag.PriceSortParm = sortOrder == "Price" ? "PriceDesc" : "Price";
             ViewBag.UserFullName = GetUserFullName();
+            ViewBag.CurrentFilter = searchString;
 
             IQueryable<Product> query = _context.Products
                 .Include(p => p.ProductImages)
-                .Include(p => p.ProductCategories);
+                .Include(p => p.ProductCategories)
+                .ThenInclude(pc => pc.Category);
 
-            //List<Product>? products = await _context.Products
-            //   .Include(p => p.ProductImages)
-            //   .Include(p => p.ProductCategories)
-            //   .OrderBy(p => p.Description)
-            //   .ToListAsync();
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                query = query.Where(p => (p.Name.ToLower().Contains(searchString.ToLower()) ||
+                                          p.ProductCategories.Any(pc => pc.Category.Name.ToLower()
+                                            .Contains(searchString.ToLower()))));
+            }
 
             switch (sortOrder)
             {
@@ -59,7 +62,11 @@ namespace ECommerce_Sat.Controllers
             }
 
             //Begins New change
-            HomeViewModel homeViewModel = new() { Products = await query.ToListAsync() };
+            HomeViewModel homeViewModel = new()
+            {
+                Products = await query.ToListAsync(),
+                Categories = await _context.Categories.ToListAsync()
+            };
 
             User user = await _userHelper.GetUserAsync(User.Identity.Name);
             if (user != null)
@@ -72,7 +79,6 @@ namespace ECommerce_Sat.Controllers
             return View(homeViewModel);
             //Ends New change
         }
-
 
         private string GetUserFullName()
         {

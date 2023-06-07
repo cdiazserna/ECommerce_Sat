@@ -8,5 +8,7 @@ namespace ECommerce_Sat.Models
 
         //Esta propiedad me muestra cuánto productos llevo agregados al carrito de compras.
         public float Quantity { get; set; }
+
+        public ICollection<Category> Categories { get; set; }
     }
 }
