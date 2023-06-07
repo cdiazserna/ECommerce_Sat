@@ -1,6 +1,7 @@
 ﻿using ECommerce_Sat.DAL;
 using ECommerce_Sat.DAL.Entities;
 using ECommerce_Sat.Enum;
+using ECommerce_Sat.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,11 +14,13 @@ namespace ECommerce_Sat.Controllers
     {
         private readonly DataBaseContext _context;
         private readonly IFlashMessage _flashMessage;
+        private readonly IOrderHelper _orderHelper;
 
-        public OrdersController(DataBaseContext context, IFlashMessage flashMessage)
+        public OrdersController(DataBaseContext context, IFlashMessage flashMessage, IOrderHelper orderHelper)
         {
             _context = context;
             _flashMessage = flashMessage;
+            _orderHelper = orderHelper;
         }
 
         public async Task<IActionResult> Index()
@@ -106,6 +109,24 @@ namespace ECommerce_Sat.Controllers
                 await _context.SaveChangesAsync();
                 _flashMessage.Confirmation(String.Format("El estado del pedido ha sido cambiado a '{0}'.", OrderStatus.Confirmado));
 
+            }
+
+            return RedirectToAction(nameof(Details), new { orderId = order.Id });
+        }
+
+        public async Task<IActionResult> CancelOrder(Guid? orderId)
+        {
+            if (orderId == null) return NotFound();
+
+            Order order = await _context.Orders.FindAsync(orderId);
+            if (order == null) return NotFound();
+
+            if (order.OrderStatus == OrderStatus.Cancelado)
+                _flashMessage.Danger(String.Format("No se puede cancelar un pedido que esté en estado '{0}'.", OrderStatus.Cancelado));
+            else
+            {
+                await _orderHelper.CancelOrderAsync(order.Id);
+                _flashMessage.Confirmation(String.Format("El estado del pedido ha sido cambiado a '{0}'.", OrderStatus.Cancelado));
             }
 
             return RedirectToAction(nameof(Details), new { orderId = order.Id });

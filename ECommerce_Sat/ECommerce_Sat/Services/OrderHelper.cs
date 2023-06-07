@@ -4,6 +4,7 @@ using ECommerce_Sat.DAL.Entities;
 using ECommerce_Sat.Enum;
 using ECommerce_Sat.Helpers;
 using ECommerce_Sat.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ECommerce_Sat.Services
 {
@@ -83,6 +84,26 @@ namespace ECommerce_Sat.Services
 
             return response;
         }
+
+        public async Task<Response> CancelOrderAsync(Guid orderId)
+        {
+            Order order = await _context.Orders
+                .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Product)
+                .FirstOrDefaultAsync(o => o.Id == orderId);
+
+            foreach (OrderDetail orderDetail in order.OrderDetails)
+            {
+                Product product = await _context.Products.FindAsync(orderDetail.Product.Id);
+                if (product != null)
+                    product.Stock += orderDetail.Quantity;
+            }
+
+            order.OrderStatus = OrderStatus.Cancelado;
+            await _context.SaveChangesAsync();
+            return new Response { IsSuccess = true };
+        }
+
 
     }
 }
